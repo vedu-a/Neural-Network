@@ -110,3 +110,26 @@ model.fit(x_train, y_train, epochs=20, batch_size=batch_size)
 
 loss, acc = model.evaluate(x_test, y_test, batch_size=batch_size)
 print("\nTest accuracy: %.1f%%" % (100.0 * acc))
+
+# Load and preprocess the custom image from your computer
+import cv2
+custom_image_path = r"custom_image.png"  #Replace with the path to your custom image
+custom_image = cv2.imread(custom_image_path, cv2.IMREAD_GRAYSCALE)
+dilated_image = cv2.dilate(custom_image, np.ones((5, 5), np.uint8), iterations=1)
+custom_image = cv2.resize(dilated_image, (28, 28))  # Resize to match the model's input dimensions
+custom_image = custom_image.astype('float32') / 255.0  # Normalize pixel values
+
+lt.imshow(custom_image, cmap = "gray")
+# Reshape the image to match the model's input shape
+custom_image = custom_image.flatten()
+custom_image = np.expand_dims(custom_image, axis=0)
+# Make predictions
+predictions = model.predict(custom_image)
+predicted_class = np.argmax(predictions[0])
+predicted_probabilities = predictions[0]
+
+# Print the predicted class and associated probabilities
+print('Predicted class:', predicted_class)
+print('Probabilities:', predicted_probabilities)
+plt.plot(predicted_probabilities)
+countToLetter[predicted_class]
